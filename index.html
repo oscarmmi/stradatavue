@@ -114,12 +114,12 @@
                                     Buscar
                                 </button>
                                 <button id="btnExportar" class="btn btn-info" 
-                                    v-show="busquedas" @click="confirmarExportar(0)">
+                                    v-show="token && busquedas" @click="confirmarExportar(0)">
                                     Exportar
                                 </button>
                             </div>                                
                         </div>
-                        <div id="graficaResultados" v-show="busquedas" class="row margensuperior">
+                        <div id="graficaResultados" v-show="token && busquedas" class="row margensuperior">
                             <div  class="col-lg-12">
                                 <h4 class="text-success">
                                     Resultados
@@ -161,7 +161,7 @@
                             </div>                                
                         </div>   
     
-                        <div id="resultadosLog" class="row margensuperior" v-show="busquedaslog">
+                        <div id="resultadosLog" class="row margensuperior" v-show="token && busquedaslog">
                             <div  class="col-lg-12">
                                 <h4 class="text-success">
                                     Resultados Historicos
@@ -231,11 +231,11 @@
                                     Detalles relacionados con el Uuid Buscado
                                 </h4>
                                 <button id="btnExportarLog" class="btn btn-info" 
-                                    v-show="busquedaslog" @click="confirmarExportar(1)">
+                                    v-show="token && busquedaslog" @click="confirmarExportar(1)">
                                     Exportar
                                 </button>
                             </div>
-                            <div  class="col-lg-12 margensuperior" v-show="busquedaslog">
+                            <div  class="col-lg-12 margensuperior" v-show="token && busquedaslog">
                                 <table id="tablaResultadosLog" class="table table-bordered table-striped display"></table>
                             </div>
                         </div>
