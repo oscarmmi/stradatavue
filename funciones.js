@@ -18,6 +18,20 @@ var app = new Vue({
             nombre_buscado:'',
             porcentaje_buscado:'',
             uuid: ''
+        },
+        log:{
+            uuid:''
+        },
+        busquedaslog:0,
+        logError:0,
+        logExitoso:0,
+        respuestalog: {
+            uuid: '', 
+            nombre_buscado:'', 
+            porcentaje_buscado:'', 
+            registros_encontrados:'',
+            estado_ejecucion:'', 
+
         }
     }, 
     created() {
@@ -290,6 +304,7 @@ var app = new Vue({
             );
         },
         exportToCsv: function(filename, rows, tipo) {
+            let that = this;
             var processRow = function (row, uuid) {
                 let aCampos = [];
                 if(uuid){
@@ -305,7 +320,7 @@ var app = new Vue({
             if(!tipo){
                 csvFile = 'Nombre, Tipo Persona, Tipo Cargo, Departamento, Municipio, % Coincidencia\n';
             }else if(tipo===1){
-                uuid = document.getElementById('log_uuid').innerHTML;
+                uuid = that.respuestalog.uuid;
                 csvFile = 'Uuid, Nombre, Tipo Persona, Tipo Cargo, Departamento, Municipio, % Coincidencia\n';
             }
             
@@ -329,6 +344,79 @@ var app = new Vue({
                     document.body.removeChild(link);
                 }
             }    
+        },
+        buscarLog: function(){
+            if(!this.token){
+                alertify.error('- Debe loguearse para poder enviar realizar las consultas');
+                this.abrirModalAuth();
+                return;
+            }
+            let respuesta = this.validarCamposLog();
+            if(parseInt(respuesta.errores.length)){
+                for (const a in respuesta.errores) {
+                    alertify.error(respuesta.errores[a]);
+                }
+                return;
+            }
+            this.busquedaslog++;
+            this.logError = 0;
+            this.logExitoso = 0;
+            let that = this;
+            let token = this.token;
+            this.crearTablaCorrespondiente('tablaResultadosLog', []);
+            $.ajax({
+                url: this.RUTA_API+this.SUBRUTA_LOG_COINCIDENCIAS,
+                data: {
+                    uuid: respuesta.uuid, 
+                    token
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (respuesta) {     
+                    that.validarEstadoToken(respuesta);       
+                    if(respuesta.estado_ejecucion){
+                        alertify.success(respuesta.estado_ejecucion);
+                    }
+                    that.logExitoso = 1;
+                    that.cargarCamposDatosLog(respuesta.datos);
+                    that.crearTablaCorrespondiente('tablaResultadosLog', respuesta.detalles);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    that.logError = 1;
+                    if(XMLHttpRequest.responseJSON.estado_ejecucion){
+                        alertify.error(XMLHttpRequest.responseJSON.estado_ejecucion);
+                    }
+                    if(respuesta.uuid){
+                        that.log.uuid = respuesta.uuid_buscado;
+                    }
+                    if(XMLHttpRequest.responseJSON.errors && parseInt(XMLHttpRequest.responseJSON.errors.length)){
+                        let numeroErrores = parseInt(XMLHttpRequest.responseJSON.errors.length);
+                        for(let i=0; i<numeroErrores; i++){
+                            alertify.error(XMLHttpRequest.responseJSON.errors[i]['message']);
+                        }
+                    }
+                }     
+            });
+        },
+        cargarCamposDatosLog: function(datos){
+            for (const a in datos) {
+                this.respuestalog[a] = datos[a];
+            }
+        },
+        validarCamposLog:function(){
+            let respuesta = {
+                errores: [], 
+                uuid:0
+            };
+            respuesta.uuid = this.log.uuid;
+            if(respuesta.uuid==''){
+                respuesta.errores.push("- El uuid no puede estar vacío");
+            }else if(!$.isNumeric(respuesta.uuid)){
+                respuesta.errores.push("- El uuid debe ser un valor númerico");
+            }else if(!Number.isInteger(parseInt(respuesta.uuid))){
+                respuesta.errores.push("- El uuid debe ser un valor entero");
+            }
+            return respuesta;
         }
     }    
 });
