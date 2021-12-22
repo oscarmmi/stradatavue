@@ -99,17 +99,24 @@
                             <div class="col-lg-4 margensuperior">
                                 <input type="text" class="form-control" 
                                     id="nombre_buscado" 
+                                    v-model="busqueda.nombre_buscado"
                                     placeholder="Ej: Alejandro Hernandez">
                             </div>  
                             <div class="col-lg-4 margensuperior">
                                 <input type="text" class="form-control" 
                                     id="porcentaje_buscado" 
+                                    v-model="busqueda.porcentaje_buscado"
                                     oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
                                     placeholder="Ej: 95">
                             </div>  
                             <div class="col-lg-4 margensuperior">
-                                <button id="btnBuscar" class="btn btn-primary" @click="">Buscar</button>
-                                <button id="btnExportar" class="btn btn-info" v-show="busquedas">Exportar</button>
+                                <button id="btnBuscar" class="btn btn-primary" @click="buscar">
+                                    Buscar
+                                </button>
+                                <button id="btnExportar" class="btn btn-info" 
+                                    v-show="busquedas" @click="confirmarExportar(0)">
+                                    Exportar
+                                </button>
                             </div>                                
                         </div>
                         <div id="graficaResultados" v-show="busquedas" class="row margensuperior">
@@ -122,7 +129,7 @@
                                 <h5>
                                     Esta consulta y sus resultados fueron almacenadas con el identificador unico (Uuid) # 
                                     <span id="texto_uuid" style="cursor:pointer;" 
-                                        class="text-primary h4"></span>
+                                        class="text-primary h4">{{ busqueda.uuid}}</span>
                                 </h5>
                             </div>
                             <div  class="col-lg-12 margensuperior">
