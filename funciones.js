@@ -151,10 +151,10 @@ var app = new Vue({
                 }
                 return;
             }
+            this.busquedas++;
             let token = this.token;
             let datos = respuesta.datos;
             let that = this;
-            that.busquedas++;
             this.crearTablaCorrespondiente('tablaResultados', []);
             $.ajax({
                 url: this.RUTA_API+this.SUBRUTA_BUSQUEDA_COINCIDENCIAS,
