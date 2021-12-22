@@ -1,4 +1,4 @@
-# stradataFront
+# stradataVue
 
 
 
@@ -10,7 +10,7 @@
 
 ## 1. Descargue el proyecto 
 
-​	git clonehttps://gitlab.com/oscarxxi/stradatavue.git
+​	git clone https://gitlab.com/oscarxxi/stradatavue.git
 
 ## 2. Abrir en el explorador 
 
